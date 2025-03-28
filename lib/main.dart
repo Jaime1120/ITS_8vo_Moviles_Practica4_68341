@@ -65,7 +65,7 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Lottie.asset(
-                  'animations/login.json',
+                  'assets/animations/login.json',
                   height: 200,
                   repeat: true,
                 ),
@@ -229,7 +229,7 @@ class RegisterScreen extends StatelessWidget {
             child: Column(
               children: [
                 Lottie.asset(
-                  'animations/login.json',
+                  'assets/animations/login.json',
                   height: 200,
                   repeat: true,
                 ),
