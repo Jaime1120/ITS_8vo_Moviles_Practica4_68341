@@ -479,67 +479,114 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar sesión',
+            onPressed: () async {
+              await ApiService.logout();
+              if (context.mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => LoginScreen()),
+                );
+              }
+            },
+          ),
+        ],
       ),
-      body: tasks.isEmpty
-          ? const Center(
-        child: Text(
-          'No hay tareas pendientes',
-          style: TextStyle(fontSize: 18),
-        ),
-      )
-          : ListView.builder(
-        itemCount: tasks.length,
-        itemBuilder: (context, index) {
-          final task = tasks[index];
-          return Card(
-            margin: const EdgeInsets.all(8),
-            child: ListTile(
-              title: Text(
-                task['titulo'],
-                style: TextStyle(
-                  decoration: task['completada']
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: tasks.isEmpty
+            ? Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.inbox, size: 64, color: Colors.grey),
+              SizedBox(height: 16),
+              Text(
+                'No hay tareas pendientes',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
-              subtitle: Text(task['descripcion']),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      _navigateToTaskScreen(index: index); // Editar tarea
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      task['completada']
-                          ? Icons.check_circle
-                          : Icons.check_circle_outline,
+            ],
+          ),
+        )
+            : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Tus tareas',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: tasks.length,
+                itemBuilder: (context, index) {
+                  final task = tasks[index];
+                  return Card(
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    onPressed: () {
-                      _toggleTaskCompletion(index);
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () {
-                      _deleteTask(index);
-                    },
-                  ),
-                ],
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(12),
+                      title: Text(
+                        task['titulo'],
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          decoration: task['completada']
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                        ),
+                      ),
+                      subtitle: Text(
+                        task['descripcion'],
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () {
+                              _navigateToTaskScreen(index: index);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              task['completada']
+                                  ? Icons.check_circle
+                                  : Icons.check_circle_outline,
+                            ),
+                            onPressed: () {
+                              _toggleTaskCompletion(index);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () {
+                              _deleteTask(index);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          _navigateToTaskScreen(); // Agregar nueva tarea
+          _navigateToTaskScreen();
         },
-        tooltip: 'Agregar tarea',
-        child: const Icon(Icons.add),
+        label: const Text('Agregar tarea'),
+        icon: const Icon(Icons.add),
       ),
     );
   }
